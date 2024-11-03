@@ -1,6 +1,6 @@
 using './main.bicep'
 
-param appName = 'container'
-param environment = 'test'
-param suffix = '20241103'
+param appName = ''
+param environment = ''
+param suffix = ''
 

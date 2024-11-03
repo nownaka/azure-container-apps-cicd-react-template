@@ -128,3 +128,5 @@ output AZURE_CLIENT_ID string = userAssignedIdentity.outputs.clientId
 output AZURE_TENANT_ID string = tenant().tenantId
 @description('The Subscription Id.')
 output AZURE_SUBSCRIPTION_ID string = subscription().id
+@description('The Resouce Group name.')
+output AZURE_RESOURCE_GROUP_NAME string = resourceGroup().name
