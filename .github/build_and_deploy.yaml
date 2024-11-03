@@ -4,7 +4,9 @@ name: Trigger auto deployment for Azure Container Apps.
 on:
   # Automatically trigger it when detected changes in repo
   push:
-    branches: [main]
+    branches:
+      - main
+      - develop
 
   # Allow mannually trigger
   workflow_dispatch:
@@ -54,13 +56,6 @@ jobs:
           password: ${{ steps.acrtoken.outputs.token }}
 
       - name: Build and push container image to registry
-        # uses: docker/build-push-action@v2
-        # with:
-        #   push: true
-        #   tags: ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.CONTAINER_NAME }}:${{ github.sha }}
-        #   file: ./Dockerfile
-        #   context: ./
-        # Use docker-compose
         run: |
           docker-compose -f ./docker-compose.yml build
           docker tag ${{ env.CONTAINER_NAME }}:latest ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.CONTAINER_NAME }}:${{ github.sha }}
