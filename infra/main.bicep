@@ -19,7 +19,7 @@ param resourceBaseName string = join(split(join([appName, environment, suffix], 
 @description('Resource name of Log Analytics Workspace.')
 param workspaceName string = 'log-${resourceBaseName}'
 @description('Resource name of Azure Container Registry.')
-param resistoryName string = 'cr${replace(resourceBaseName, '-', '')}'
+param registryName string = 'cr${replace(resourceBaseName, '-', '')}'
 @description('Resource name of Azure Container Apps Environment.')
 param containerAppsEnvironmentName string = 'cae-${resourceBaseName}'
 @description('Resource name of User Assigned Managed Identity.')
@@ -30,8 +30,16 @@ param containerAppName string = 'ca-${resourceBaseName}'
 @description('Role definition to assign.')
 param roleDifinitions { name: string, id: string }[] = [
   {
-    name: 'acrPull'
+    name: 'AcrPull'
     id: '7f951dda-4ed3-4680-a7ca-43fe172d538d'
+  }
+  {
+    name: 'AcrPush'
+    id: '8311e382-0749-4cb8-b61a-304f252e45ec'
+  }
+  {
+    name: 'ContainerAppsContributor'
+    id: '358470bc-b998-42bd-ab17-a7e34c199c0f'
   }
 ]
 
@@ -52,10 +60,10 @@ module logAnalyticsworkspace './modules/workspaces.bicep' = {
 /* Azure Container Registry */
 @description('Azure Container Registry')
 module containerRegistry './modules/registries.bicep' = {
-  name: 'Deploy-ContainerRegistory'
+  name: 'Deploy-ContainerRegistry'
   params: {
     registryLocation: location
-    registryName: resistoryName
+    registryName: registryName
   }
 }
 
@@ -84,13 +92,13 @@ module userAssignedIdentity './modules/userAssignedIdentities.bicep' = {
 
 /* Role Assingnment */
 @description('Role Assingnment')
-module roleAssignment './modules/roleAssignmentsFromARM.bicep' = [ for roleDifinition in roleDifinitions: {
+module roleAssignment './modules/roleAssignmentsFromARM.bicep' = [ for (roleDifinition , index) in roleDifinitions: {
   name: 'RoleAssignement-${roleDifinition.name}'
   params: {
     roleName: roleDifinition.name
     roleDefinitionId: roleDifinition.id
     principalId: userAssignedIdentity.outputs.principalId
-    resourceId: containerRegistry.outputs.resourceId
+    resourceId: (index <= 1) ? containerRegistry.outputs.resourceId : containerApp.outputs.resourceId
   }
 }]
 
@@ -130,3 +138,7 @@ output AZURE_TENANT_ID string = tenant().tenantId
 output AZURE_SUBSCRIPTION_ID string = subscription().id
 @description('The Resouce Group name.')
 output AZURE_RESOURCE_GROUP_NAME string = resourceGroup().name
+@description('Domain name of Azure Container Registry.')
+output AZURE_CONTAINER_REGISTRY_NAME string = containerRegistry.outputs.name
+@description('Resource name of Azure Container App.')
+output AZURE_CONTAINER_APP_NAME string = containerApp.outputs.name
