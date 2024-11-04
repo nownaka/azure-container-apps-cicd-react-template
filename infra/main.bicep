@@ -27,6 +27,9 @@ param userAssignedIdentityName string = 'id-${resourceBaseName}'
 @description('Resource name of Azure Container Apps.')
 param containerAppName string = 'ca-${resourceBaseName}'
 
+@description('')
+param federatedIdentityCredentialsConfig { name: string, audiendes: string[], issuer: string, subjedt: string }
+
 @description('Role definition to assign.')
 param roleDifinitions { name: string, id: string }[] = [
   {
@@ -88,19 +91,39 @@ module userAssignedIdentity './modules/userAssignedIdentities.bicep' = {
   }
 }
 
-
+@description('Federated Identity Credentials.')
+module federatedIdentityCredentials './modules/federatedIdentityCredentials.bicep' = {
+  name: 'Add-FederatedIdentityCredentials'
+  params: {
+    federatedIdentityCredentialName: federatedIdentityCredentialsConfig.name
+    userAssignedIdentityName: userAssignedIdentity.outputs.name
+    audiendes: federatedIdentityCredentialsConfig.audiendes
+    issuer: federatedIdentityCredentialsConfig.issuer
+    subjedt: federatedIdentityCredentialsConfig.subjedt
+  }
+}
 
 /* Role Assingnment */
 @description('Role Assingnment')
-module roleAssignment './modules/roleAssignmentsFromARM.bicep' = [ for (roleDifinition , index) in roleDifinitions: {
+module roleAssignment_containerRegistry './modules/roleAssignmentsFromARM.bicep' = [ for (roleDifinition , index) in roleDifinitions: if( index <= 1){
   name: 'RoleAssignement-${roleDifinition.name}'
   params: {
     roleName: roleDifinition.name
     roleDefinitionId: roleDifinition.id
     principalId: userAssignedIdentity.outputs.principalId
-    resourceId: (index <= 1) ? containerRegistry.outputs.resourceId : containerApp.outputs.resourceId
+    resourceId: containerRegistry.outputs.resourceId
   }
 }]
+
+module roleAssignment_containerApp './modules/roleAssignmentsFromARM.bicep' = {
+  name: 'RoleAssignement-${roleDifinitions[2].name}'
+  params: {
+    roleName: roleDifinitions[2].name
+    roleDefinitionId: roleDifinitions[2].id
+    principalId: userAssignedIdentity.outputs.principalId
+    resourceId: containerApp.outputs.resourceId
+  }
+}
 
 /* Azure Container Apps */
 var _managedIdentity = {
@@ -113,6 +136,10 @@ var _resistories = [
     identity: userAssignedIdentity.outputs.resourceId
     server: _registryServer
 }]
+var _ingress = {
+  external: true
+  targetPort: 3000
+}
 
 @description('Azure Container App')
 module containerApp './modules/containerapps.bicep' = {
@@ -124,6 +151,7 @@ module containerApp './modules/containerapps.bicep' = {
     registryServer: _registryServer
     managedIdentity: _managedIdentity
     registries: _resistories
+    ingress: _ingress
   }
 }
 
