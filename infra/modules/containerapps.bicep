@@ -38,8 +38,8 @@ param containers object[] = [
     command: []
     args: []
     resources: {
-        cpu: '0.25'
-        memory: '.5Gi'
+      cpu: '0.25'
+      memory: '.5Gi'
     }
   }
 ]

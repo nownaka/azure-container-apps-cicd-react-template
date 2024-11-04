@@ -12,7 +12,7 @@ param federatedIdentityCredentialsConfig = { // require
   name: 'github_federation_for_azure_container_services'
   audiendes: ['api://AzureADTokenExchange']
   issuer: 'https://token.actions.githubusercontent.com'
-  subjedt: 'repo:{github account name}/{github repository name}:{entity}'
+  subjedt: 'repo:{github account name}/{github repository name}:environment:{environment name}'
 }
 
 // About federatedIdentityCredentialsConfig
@@ -27,5 +27,5 @@ param federatedIdentityCredentialsConfig = { // require
 //  - subjedt:
 //    repo:{github account name}/{github repository name}:{entity}
 //    - entity:
-//        Environment => environment:{environment name}
+//        Environment => environment:{environment name} <<<= **** 
 //        Branch => ref:refs/heads/{branch name}
