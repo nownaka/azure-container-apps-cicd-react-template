@@ -70,13 +70,11 @@
 
 ![image](https://github.com/user-attachments/assets/5e7ce623-77fb-4ccc-b96e-4795dde4cc61)
 
-
 ## 利用方法
 
 > [!WARNING]
 > Azure のコンテナサービス群を利用します。
 > 利用状況によっては、コストが発生しますが、自己責任でお願いします。
-
 
 ### STEP 1 : テンプレートリポジトリをフォークする
 
@@ -86,9 +84,9 @@
 
 > [!NOTE]
 > フォークとクローンについて
+>
 > - https://docs.github.com/ja/pull-requests/collaborating-with-pull-requests/working-with-forks/fork-a-repo
 > - https://docs.github.com/ja/repositories/creating-and-managing-repositories/cloning-a-repository
-
 
 ### STEP 2 : Bicep を利用してインフラ環境を構築する
 
@@ -193,6 +191,7 @@ param federatedIdentityCredentialsConfig = { // require
 
 > [!NOTE]
 > GitHub Action の変数とシークレットについて
+>
 > - https://docs.github.com/ja/actions/security-for-github-actions/security-guides/using-secrets-in-github-actions
 > - https://docs.github.com/ja/actions/writing-workflows/choosing-what-your-workflow-does/store-information-in-variables
 
@@ -216,6 +215,7 @@ param federatedIdentityCredentialsConfig = { // require
 
 > [!NOTE]
 > ワークフローの手動実行について
+>
 > - https://docs.github.com/ja/actions/managing-workflow-runs-and-deployments/managing-workflow-runs/manually-running-a-workflow
 
 ### STEP 5 : ワークフローとデプロイを確認する

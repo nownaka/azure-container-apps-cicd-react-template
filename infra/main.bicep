@@ -136,10 +136,6 @@ var _resistories = [
     identity: userAssignedIdentity.outputs.resourceId
     server: _registryServer
 }]
-var _ingress = {
-  external: true
-  targetPort: 3000
-}
 
 @description('Azure Container App')
 module containerApp './modules/containerapps.bicep' = {
@@ -151,7 +147,6 @@ module containerApp './modules/containerapps.bicep' = {
     registryServer: _registryServer
     managedIdentity: _managedIdentity
     registries: _resistories
-    ingress: _ingress
   }
 }
 
