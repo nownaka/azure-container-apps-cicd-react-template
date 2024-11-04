@@ -13,6 +13,8 @@
 ### ローカル PC
 
 - git がインストールされていること。
+- vscode がインストールされていること。
+  - Bicep(拡張機能) がインストールされていること。
 
 ### Azure
 
@@ -48,7 +50,7 @@
 
 ### app : React アプリケーション
 
-`npx create-react-app —typescript` で作成されるデフォルトの構成です。
+`npx create-react-app app --template typescript` で作成されるデフォルトの構成です。
 
 ### infra : Azure リソース
 
@@ -85,8 +87,8 @@
 > [!NOTE]
 > フォークとクローンについて
 >
-> - https://docs.github.com/ja/pull-requests/collaborating-with-pull-requests/working-with-forks/fork-a-repo
-> - https://docs.github.com/ja/repositories/creating-and-managing-repositories/cloning-a-repository
+> - [リポジトリをフォークする](https://docs.github.com/ja/pull-requests/collaborating-with-pull-requests/working-with-forks/fork-a-repo)
+> - [リポジトリをクローンする](https://docs.github.com/ja/repositories/creating-and-managing-repositories/cloning-a-repository)
 
 ### STEP 2 : Bicep を利用してインフラ環境を構築する
 
@@ -109,7 +111,7 @@ param federatedIdentityCredentialsConfig = { // require
   name: 'github_federation_for_azure_container_services'
   audiendes: ['api://AzureADTokenExchange']
   issuer: 'https://token.actions.githubusercontent.com'
-  subjedt: 'repo:{github account name}/{github repository name}:Production'
+  subjedt: 'repo:{github account name}/{github repository name}:environment:Production'
 }
 
 // federatedIdentityCredentialsConfig について
@@ -124,7 +126,7 @@ param federatedIdentityCredentialsConfig = { // require
 // - subjedt:
 //    repo:{github account name}/{github repository name}:{entity}
 //    - entity：
-//       環境 => environment:{environment name}
+//       環境 => environment:{environment name} <<=== ここ
 //       ブランチ => ref:refs/heads/{branch name}
 
 ```
@@ -138,15 +140,15 @@ param federatedIdentityCredentialsConfig = { // require
 
 ![image](https://github.com/user-attachments/assets/c949cdb4-71ce-478c-9494-f75771142558)
 
-1. [ infra/main.bicep ] を選択する。
+3. [ infra/main.bicep ] を選択する。
 
 ![image](https://github.com/user-attachments/assets/dd22d372-4bd4-4ea5-9cbb-5e674d9dbb22)
 
-1. [ デプロイ名(任意の値) ] を入力して、Enter を押す。
+4. [ デプロイ名(任意の値) ] を入力して、Enter を押す。
 
 ![image](https://github.com/user-attachments/assets/19dc83f9-3df0-4add-a2ba-e2d768700d6b)
 
-1. リソースグループ を選択、または新規作成する。
+5. リソースグループ を選択、または新規作成する。
 
 ![image](https://github.com/user-attachments/assets/da690ee8-23d4-44ff-aff8-5b0f6e8bfac0)
 
@@ -156,7 +158,7 @@ param federatedIdentityCredentialsConfig = { // require
 
 ![image](https://github.com/user-attachments/assets/fb68d3a1-4042-4d94-9bb5-78728d0ea3b4)
 
-1. [ infra/main.bicepparam ] を選択する。
+6. [ infra/main.bicepparam ] を選択する。
 
 ![image](https://github.com/user-attachments/assets/c8add64e-4f6e-46b5-a2d7-7e41273e6fb9)
 
@@ -172,11 +174,11 @@ param federatedIdentityCredentialsConfig = { // require
 
 ![image](https://github.com/user-attachments/assets/9b0f821f-33f2-4fd9-b371-5cd53dc7a59a)
 
-1. [ リソースグループに移動 ] を新規タブで開き、リソース一覧の中から、 [<コンテナアプリ>] を選択する。
+2. [ リソースグループに移動 ] を新規タブで開き、リソース一覧の中から、 [<コンテナアプリ>] を選択する。
 
 ![image](https://github.com/user-attachments/assets/9d9c703a-af4a-44e3-a9b7-d9b09d31f738)
 
-1. コンテナアプリの URL にアクセスし、下記画面が表示されることを確認する。
+3. コンテナアプリの URL にアクセスし、下記画面が表示されることを確認する。
 
 ![image](https://github.com/user-attachments/assets/dfd67818-eda4-4b49-841c-18f256f911fd)
 
@@ -184,7 +186,7 @@ param federatedIdentityCredentialsConfig = { // require
 
 ### STEP 3 : GitHub Action 用に変数とシークレットを登録する
 
-1. デプロイ結果の[ 出力 ] を選択する。（[STEP : 2-3-1 の画面](https://www.notion.so/Azure-GitHub-React-CI-CD-131ab61659bf80b88b8ddeef8e6c754f?pvs=21)）
+1. デプロイ結果の[ 出力 ] を選択する。（[STEP : 2-3-1 の画面](https://github.com/nownaka/azure-container-apps-cicd-react-template#2-3--リソースを確認する)）
 2. 表示された値を GitHub リポジトリの [Actions secrets and variables] から、 `Production` 環境を作成し、変数とシークレットを登録する。
 
 ![image](https://github.com/user-attachments/assets/702d2d5f-230d-4442-9039-fb6b420c2357)
@@ -192,8 +194,8 @@ param federatedIdentityCredentialsConfig = { // require
 > [!NOTE]
 > GitHub Action の変数とシークレットについて
 >
-> - https://docs.github.com/ja/actions/security-for-github-actions/security-guides/using-secrets-in-github-actions
-> - https://docs.github.com/ja/actions/writing-workflows/choosing-what-your-workflow-does/store-information-in-variables
+> - [GitHub Actions でのシークレットの使用](https://docs.github.com/ja/actions/security-for-github-actions/security-guides/using-secrets-in-github-actions)
+> - [変数に情報を格納する](https://docs.github.com/ja/actions/writing-workflows/choosing-what-your-workflow-does/store-information-in-variables)
 
 ![image](https://github.com/user-attachments/assets/af08cc60-c387-4b4d-9cfd-5bcb74303667)
 
@@ -216,7 +218,7 @@ param federatedIdentityCredentialsConfig = { // require
 > [!NOTE]
 > ワークフローの手動実行について
 >
-> - https://docs.github.com/ja/actions/managing-workflow-runs-and-deployments/managing-workflow-runs/manually-running-a-workflow
+> [ワークフローの手動実行](https://docs.github.com/ja/actions/managing-workflow-runs-and-deployments/managing-workflow-runs/manually-running-a-workflow)
 
 ### STEP 5 : ワークフローとデプロイを確認する
 
