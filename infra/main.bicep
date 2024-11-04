@@ -163,7 +163,7 @@ output AZURE_CLIENT_ID string = userAssignedIdentity.outputs.clientId
 @description('The Tenant Id.')
 output AZURE_TENANT_ID string = tenant().tenantId
 @description('The Subscription Id.')
-output AZURE_SUBSCRIPTION_ID string = subscription().id
+output AZURE_SUBSCRIPTION_ID string = subscription().subscriptionId
 @description('The Resouce Group name.')
 output AZURE_RESOURCE_GROUP_NAME string = resourceGroup().name
 @description('Domain name of Azure Container Registry.')
